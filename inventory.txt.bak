@@ -67,11 +67,11 @@ iso_image=ubuntu-20.04.2-live-server-amd64.iso
 
 
 [vsphere:vars]
-vsphere_hostname=vcsa.your.domain
+vsphere_hostname=vcsa.lab.clearfocustech.com
 esxi_host=10.2.0.13
-vsphere_datacenter=hq-datacenter
-vsphere_datastore=DataStore
-vsphere_iso_datastore=DataStore
+vsphere_datacenter=Datacenter
+vsphere_datastore=QNAPDataStore
+vsphere_iso_datastore=QNAPDataStore
 vsphere_iso_folder=ISOs
 
 [vsphere:children]
