@@ -1,0 +1,76 @@
+- hosts: all
+  connection: local
+  become: no
+
+
+  vars:
+    esxi_hostname: "{{ hostvars[inventory_hostname]['esxi_host'] }}"
+    vsphere_datacenter: "{{ hostvars[inventory_hostname]['vsphere_datacenter'] }}"
+    vsphere_datastore: "{{ hostvars[inventory_hostname]['vsphere_datastore'] }}"
+    vsphere_iso_datastore: "{{ hostvars[inventory_hostname]['vsphere_iso_datastore'] }}"
+    vsphere_iso_directory: "{{ hostvars[inventory_hostname]['vsphere_iso_folder'] }}"
+    vsphere_hostname: "{{ hostvars[inventory_hostname]['vsphere_hostname'] }}"
+    folder_name: "/"
+
+    vsphere_username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
+    vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
+
+    website: "{{ hostvars[inventory_hostname]['website'] }}"
+    website: "https://news.google.com"
+
+  tasks:
+  - name: Send WINDOWS_R
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+      hostname: "{{ vsphere_hostname }}"
+      username: "{{ vsphere_username }}"
+      password: "{{ vsphere_password }}"
+      datacenter: "{{ vsphere_datacenter }}"
+      folder: "{{ folder_name }}"
+      name: "{{ inventory_hostname }}"
+      keys_send:
+        - WINDOWS_R
+      validate_certs: False
+
+  - name: Send microsoft-edge
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+      hostname: "{{ vsphere_hostname }}"
+      username: "{{ vsphere_username }}"
+      password: "{{ vsphere_password }}"
+      datacenter: "{{ vsphere_datacenter }}"
+      folder: "{{ folder_name }}"
+      name: "{{ inventory_hostname }}"
+      string_send: "microsoft-edge:{{ website }}"
+      validate_certs: False
+
+  - name: Send enter
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+     hostname: "{{ vsphere_hostname }}"
+     username: "{{ vsphere_username }}"
+     password: "{{ vsphere_password }}"
+     datacenter: "{{ vsphere_datacenter }}"
+     folder: "{{ folder_name }}"
+     name: "{{ inventory_hostname }}"
+     keys_send:
+       - ENTER
+     validate_certs: False
+
+  - name: Pause for 15 seconds to open edge
+    ansible.builtin.pause:
+      seconds: 15
+
+  - name: Send ALT_F4 
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+      hostname: "{{ vsphere_hostname }}"
+      username: "{{ vsphere_username }}"
+      password: "{{ vsphere_password }}"
+      datacenter: "{{ vsphere_datacenter }}"
+      folder: "{{ folder_name }}"
+      name: "{{ inventory_hostname }}"
+      keys_send:
+        - ALT_F4
+      validate_certs: False
+
