@@ -1,0 +1,23 @@
+# Get the Network Adapter's Prefix
+$ipIF = (Get-NetAdapter).ifIndex
+
+# Turn off IPv6 Random & Temporary IP Assignments
+Set-NetIPv6Protocol -RandomizeIdentifiers Disabled
+Set-NetIPv6Protocol -UseTemporaryAddresses Disabled
+
+# Turn off IPv6 Transition Technologies
+Set-Net6to4Configuration -State Disabled
+Set-NetIsatapConfiguration -State Disabled
+Set-NetTeredoConfiguration -Type Disabled
+
+# Add IPv4 Address, Gateway, and DNS
+New-NetIPAddress -InterfaceIndex $ipIF -IPAddress {{ hostvars[inventory_hostname]['ip'] }} -PrefixLength {{ hostvars[inventory_hostname]['prefix'] }}  -DefaultGateway {{ hostvars[inventory_hostname]['gateway'] }}
+Set-DNSClientServerAddress -interfaceIndex $ipIF -ServerAddresses {{ hostvars[inventory_hostname]['nameserver'] }}
+Start-Sleep -Seconds 5
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+Enable-PSRemoting -SkipNetworkProfileCheck
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+# Rename the Computer, and Restart
+#Rename-Computer -NewName {{ inventory_hostname }} -force
+#Restart-Computer

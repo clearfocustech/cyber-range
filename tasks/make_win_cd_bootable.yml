@@ -1,0 +1,109 @@
+- hosts: all
+  connection: local
+  become: no
+
+
+#  vars_prompt:
+#  - name: "vsphere_username"
+#    prompt: "Enter your vsphere username"
+#    private: yes
+#  - name: "vsphere_password"
+#    prompt: "Enter your vsphere password"
+#    private: yes
+      
+  vars:
+    esxi_hostname: "{{ hostvars[inventory_hostname]['esxi_host'] }}"
+    vsphere_datacenter: "{{ hostvars[inventory_hostname]['vsphere_datacenter'] }}"
+    vsphere_datastore: "{{ hostvars[inventory_hostname]['vsphere_datastore'] }}"
+    vsphere_iso_datastore: "{{ hostvars[inventory_hostname]['vsphere_iso_datastore'] }}"
+    vsphere_iso_directory: "{{ hostvars[inventory_hostname]['vsphere_iso_folder'] }}"
+    vsphere_hostname: "{{ hostvars[inventory_hostname]['vsphere_hostname'] }}"
+    iso_image: "{{ hostvars[inventory_hostname]['iso_image'] }}"
+ 
+    vsphere_username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
+    vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
+  tasks:
+ 
+  - command: mktemp -d
+    delegate_to: localhost
+    register: loopdir
+ 
+  - name: create local build directory
+    file: 
+      path: "{{ playbook_dir }}/build"
+      state: directory
+
+  - name: Query if updated Windows ISO already exists, do not constantly re-upload it. RED TEXT/FAILURE HERE IS OK.
+    vsphere_file:
+      host: '{{ vsphere_hostname }}'
+      username: "{{ vsphere_username }}"
+      password: "{{ vsphere_password }}"
+      datacenter: "{{ vsphere_datacenter }}"
+      datastore: "{{ vsphere_iso_datastore }}"
+      path: "{{ vsphere_iso_directory }}/{{ iso_image }}-no-prompt.iso"
+      state: file
+      validate_certs: False
+    delegate_to: localhost
+    register: iso_exists
+    ignore_errors: true
+
+  - name: Print if the ISO was found on VMware
+    ansible.builtin.debug: 
+      msg: "Does the ISO image already exist on vSphere ? The variable iso_exists.state is: {{ iso_exists.state }}"
+
+  - name: Check for the ISO on the local disk
+    ansible.builtin.stat:
+      path: "{{ playbook_dir }}/isos/{{ iso_image }}"
+    register: local_iso
+
+  - name: Print error if ISO does not exist locally
+    when: iso_exists.state == "absent" and not local_iso.stat.exists
+    ansible.builtin.fail:
+      msg: "Missing the ISO image, cannot proceed. Expected the file {{ playbook_dir }}/isos/{{ iso_image }}"
+
+  - name: extract Windows source iso image
+    when: iso_exists.state == "absent"
+    command: 7z x {{ playbook_dir }}/isos/{{ iso_image }} -o{{ loopdir.stdout }}
+    delegate_to: localhost
+ 
+  - name: copy source Windows iso image contents to Windows iso without boot prompt
+    when: iso_exists.state == "absent"
+    shell: mkisofs -b boot/etfsboot.com -no-emul-boot -c BOOT.CAT -iso-level 4 -J -l -D -N -joliet-long -relaxed-filenames -v -V "Custom" -udf -boot-info-table -eltorito-alt-boot -eltorito-boot efi/microsoft/boot/efisys_noprompt.bin -no-emul-boot -o {{ playbook_dir }}/build/{{ iso_image }}-no-prompt.iso -allow-limited-size "{{ loopdir.stdout }}"
+    delegate_to: localhost
+
+  - name: upload Windows ISO with no boot prompt
+    when: iso_exists.state == "absent"
+    vsphere_copy:
+      hostname: "{{ vsphere_hostname }}"
+      username: "{{ vsphere_username }}"
+      password: "{{ vsphere_password }}"
+      datacenter: "{{ vsphere_datacenter }}"
+      datastore: "{{ vsphere_iso_datastore }}"
+      src: "{{ playbook_dir }/build/{{ iso_image }}-no-prompt.iso"
+      path: "{{ vsphere_iso_directory }}/{{  iso_image }}-no-prompt.iso"
+      timeout: 360
+      validate_certs: False
+ 
+  - name: cleanup temp directories
+    file:
+      path: "{{ loopdir.stdout }}"
+      state: absent
+ 
+  - name: cleanup custom iso from build directory
+    when: False
+    file:
+      path: "{{ playbook_dir }}/build/{{ iso_image }}-no-prompt.iso"
+      state: absent
+ 
+  - name: delete custom iso image from datastore
+    when: False 
+    vsphere_copy:
+      validate_certs: False
+      hostname: '{{ vsphere_hostname }}'
+      username: '{{ vsphere_username }}'
+      password: '{{ vsphere_password }}'
+      datacenter: "{{ vsphere_datacenter }}"
+      datastore: "{{ vsphere_datastore }}"
+      path: "{{ vsphere_iso_directory }}/{{ iso_image }}-no-prompt.iso"
+      state: absent
+    delegate_to: localhost

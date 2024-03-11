@@ -1,0 +1,15 @@
+- hosts: all
+  tasks:
+    - name: Install 7-Zip
+      win_package:
+        path: \\domain\software\7z1900-x64.msi
+        product_id: '{}'
+        state: present
+        username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+        password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
+        become: yes
+        become_method: runas
+        become_flags: logon_type=new_credential logon_flags:netcredentials_only
+        vars: 
+          ansible_become_user: "{{ hostvars[inventory_hostname]['domain_name'] }}\{{ hostvars[inventory_hostname]['domain_admin'] }}"
+          ansible_become_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"

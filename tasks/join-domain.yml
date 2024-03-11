@@ -1,0 +1,12 @@
+- name: join windows to Activer Directory Domain
+  hosts: all
+
+  tasks:
+  - name: join host to Active Directory automatic reboot
+    win_domain_membership:
+      dns_domain_name: "{{ domain_name }}"
+      hostname: "{{inventory_hostname }}"
+      domain_admin_user: "{{ domain_name }}\\{{ hostvars[inventory_hostname]['domain_admin'] }}"
+      domain_admin_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"
+      state: domain
+      reboot: true
