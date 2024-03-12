@@ -1,0 +1,20 @@
+[domain_users]
+bob firstname=Bob surname=Smith password=SuperSecret1234. 
+sam firstname=Sam surname=Jones password=SuperSecret1234. 
+jane firstname=Jane surname=Jones password=SuperSecret1234. 
+john firstname=John surname=Jones password=SuperSecret1234. 
+ 
+[domain:vars]
+domain_name=test.lab.local
+domain_controller=test-win2019
+dsrm_pass=AStr0ngDSRMP@ssword
+domain_admin=Administrator
+domain_admin_pass=Password!
+ansible_connection=winrm
+ansible_user=administrator
+ansible_password=Password!
+ansible_port=5985
+ansible_winrm_transport=ntlm
+
+[domain:children]
+domain_users

@@ -1,0 +1,25 @@
+- name: Create Ative Directory users
+  hosts: all
+  gather_facts: no
+    #connection: local
+  vars:
+    ansible_connection: winrm
+    ansible_user: administrator
+    ansible_password: Password!
+    ansible_port: 5985
+    ansible_winrm_transport: ntlm
+
+
+  tasks:
+  - name: Ensure user bob is created and use custom credentials to create the user
+    delegate_to: "{{ domain_controller }}"
+    win_domain_user:
+      name: "{{ inventory_hostname }}"
+      firstname: "{{ hostvars[inventory_hostname]['surname'] }}"
+      surname: "{{ hostvars[inventory_hostname]['surname'] }}"
+      password: "{{ hostvars[inventory_hostname]['password'] }}"
+      state: present
+      domain_username: "{{ domain_name }}\\{{ hostvars[inventory_hostname]['domain_admin'] }}"
+      domain_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"
+      domain_server: "{{ domain_controller }}"
+

@@ -1,0 +1,2 @@
+### This folder has other related files:
+- vmware_guest_sendkey.py This is a modified version of the code which enabled some key combinations to support the user activity. Exmaples include ALT-F4 and WIN-R. On Ubuntu this is placed in /usr/lib/python3/dist-packages/ansible_collections/community/vmware/plugins/modules
