@@ -1,0 +1,38 @@
+#cloud-config
+autoinstall:
+  # version is an Autoinstall required field.
+  version: 1
+
+  # This adds the default ubuntu-desktop packages to the system.
+  # Any desired additional packages may also be listed here.
+#  packages:
+#    - ubuntu-desktop
+  identity:
+    realname: ''
+    username: {{ hostvars[inventory_hostname]['local_admin'] }}
+    # A password hash is needed. `mkpasswd --method=SHA-512` can help.
+    # mkpasswd can be found in the package 'whois'
+    password: {{ local_admin_pass }}
+    hostname: {{ inventory_hostname }}
+  ssh:
+    install-server: yes
+    allow-pw: yes
+    authorized-keys: []
+  # Subiquity will, by default, configure a partition layout using LVM.
+  locale: en_US.UTF-8
+  network:
+    ethernets:
+      ens192:
+        addresses:
+        - {{ hostvars[inventory_hostname]['ip'] }}/{{ hostvars[inventory_hostname]['prefixlen'] }}
+        gateway4: {{ hostvars[inventory_hostname]['gateway'] }}
+        nameservers:
+          addresses:
+          - {{ hostvars[inventory_hostname]['nameserver'] }}
+          search:
+          - {{ hostvars[inventory_hostname]['domain'] }}
+    version: 2
+
+  storage:
+    layout:
+      name: lvm
