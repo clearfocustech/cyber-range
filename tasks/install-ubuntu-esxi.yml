@@ -15,7 +15,10 @@
     ram_mb: "{{ hostvars[inventory_hostname]['ram_mb'] }}"
     cpu_count: "{{ hostvars[inventory_hostname]['cpu_count'] }}"
     disk_gb: "{{ hostvars[inventory_hostname]['disk_gb'] }}"
-    unattend: "{{ hostvars[inventory_hostname]['unattend'] }}"
+    local_user: "{{ hostvars[inventory_hostname]['local_admin'] }}"
+    local_user_pass: "{{ hostvars[inventory_hostname]['local_admin_pass'] }}"
+    root_pass: "{{ hostvars[inventory_hostname]['local_admin_pass'] }}"
+
  
     vsphere_username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
     vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"

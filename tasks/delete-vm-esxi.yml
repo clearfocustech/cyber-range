@@ -19,18 +19,19 @@
     vsphere_iso_directory: "{{ hostvars[inventory_hostname]['vsphere_iso_folder'] }}"
     vsphere_hostname: "{{ hostvars[inventory_hostname]['vsphere_hostname'] }}"
 
-    vm_network: "{{ hostvars[inventory_hostname]['vm_network'] }}"
-    iso_image: "{{ hostvars[inventory_hostname]['iso_image'] }}"
-    ram_mb: "{{ hostvars[inventory_hostname]['ram_mb'] }}"
-    cpu_count: "{{ hostvars[inventory_hostname]['cpu_count'] }}"
-    disk_gb: "{{ hostvars[inventory_hostname]['disk_gb'] }}"
-    unattend: "{{ hostvars[inventory_hostname]['unattend'] }}"
-
     vsphere_username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
     vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
 
   tasks:
- 
+  - name: Set the state of a virtual machine to poweroff
+    vmware_guest_powerstate:
+      validate_certs: False
+      hostname: "{{ vsphere_hostname }}"
+      username: "{{ vsphere_username }}"
+      password: "{{ vsphere_password }}"
+      name: "{{ inventory_hostname }}"
+      state: powered-off
+
   - name: delete vm
     vmware_guest:
       validate_certs: False

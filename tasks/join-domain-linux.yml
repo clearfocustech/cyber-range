@@ -1,0 +1,49 @@
+---
+- name: Linux join to AD domain
+  hosts: linux
+  become: yes
+  
+  vars:
+    domain_name: "{{ hostvars[inventory_hostname]['domain_name'] }}"
+    domain_admin: "{{ hostvars[inventory_hostname]['domain_admin'] }}" 
+    domain_admin_pass: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"
+
+  tasks:
+  - name: Install required packages
+    package:
+      name:
+        - realmd
+        - sssd
+        - samba-common
+        - adcli
+      state: present
+
+  - name: Join AD 
+    expect:
+      command: /bin/bash -c "/usr/sbin/realm join {{ domain_name }} --user={{ domain_admin }} --automatic-id-mapping=no"
+      responses:
+          Password.*: "{{ domain_admin_pass }}"
+    register: ad_join_result
+    ignore_errors: yes
+
+  - name: confirm AD join result
+    when: ad_join_result.rc != 0
+    fail:
+      msg: "Unable to join the AD domain, {{ ad_join_result.stderr }}"
+
+
+  - name: Restart SSSD service
+    service:
+      name: sssd
+      state: restarted
+      enabled: yes
+
+  - name: Validate the AD join
+    command: getent passwd {{ domain_admin }}
+    register: validate_result
+    ignore_errors: yes
+
+  - name: Check the validation result
+    fail:
+      msg: "AD join validation failed, {{ validate_result.stderr }}"
+    when: validate_result.rc != 0

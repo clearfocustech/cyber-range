@@ -2,8 +2,8 @@
   tasks:
     - name: Install 7-Zip
       win_package:
-        path: \\domain\software\7z1900-x64.msi
-        product_id: '{}'
+        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\7z1900-x64.msi
+        product_id: '{23170F69-40C1-2702-2301-000001000000}'
         state: present
         username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
         password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
@@ -13,3 +13,45 @@
         vars: 
           ansible_become_user: "{{ hostvars[inventory_hostname]['domain_name'] }}\{{ hostvars[inventory_hostname]['domain_admin'] }}"
           ansible_become_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"
+          
+    - name: Install puTTy
+      win_package:
+        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\putty-64bit-0.80-instaler.msi
+        product_id: '{98B86AF9-EC3E-49F8-8B34-B48837CC5719}'
+        state: present
+        username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+        password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
+        
+    - name: Install Wireshark
+      win_package:
+        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\Wireshark-4.2.3-x64.exe
+        creates_path: C:\Program Files\Wireshark\Wireshark.exe
+        creates_version: 4.2.3
+        arguments: /S
+        state: present
+        username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+        password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
+        become: yes
+        become_method: runas
+        become_flags: logon_type=new_credential logon_flags:netcredentials_only
+        vars: 
+          ansible_become_user: "{{ hostvars[inventory_hostname]['domain_name'] }}\{{ hostvars[inventory_hostname]['domain_admin'] }}"
+          ansible_become_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"
+          
+    - name: Install WinSCP
+      win_package:
+        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\WinSCP-6.3.2-Setup.exe
+        creates_path: C:\Program Files (x86)\Winscp\winscp.exe
+        creates_version: 6.3.2
+        arguments:
+          - /SILENT
+          - /ALLUSERS
+        state: present
+        username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+        password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
+        become: yes
+        become_method: runas
+        become_flags: logon_type=new_credential logon_flags:netcredentials_only
+        vars: 
+          ansible_become_user: "{{ hostvars[inventory_hostname]['domain_name'] }}\{{ hostvars[inventory_hostname]['domain_admin'] }}"
+          ansible_become_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"          

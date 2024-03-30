@@ -4,7 +4,7 @@ auth --enableshadow --passalgo=sha512
 install
 # Use CDROM installation media
 cdrom
-#url --url http://mirror/centos/7/os/x86_64/
+#url --url http://mirror/ubuntu/bionic/amd64/
 # Use graphical install
 graphical
 # Run the Setup Agent on first boot
@@ -19,7 +19,8 @@ lang en_US.UTF-8
 network --bootproto=static --ip={{ hostvars[inventory_hostname]['ip'] }} --netmask={{ hostvars[inventory_hostname]['netmask'] }} --gateway={{ hostvars[inventory_hostname]['gateway'] }} --nameserver={{ hostvars[inventory_hostname]['nameserver'] }} --hostname={{ inventory_hostname }}
  
 # Root password
-rootpw your_password_here
+rootpw {{ root_pass }}
+user --name={{ local_user }} --password={{ local_user_pass }} --plaintext
 # System services
 services --disabled="chronyd"
 # System timezone

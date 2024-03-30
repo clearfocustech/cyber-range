@@ -1,0 +1,32 @@
+- hosts: all
+    vars:
+        win_temp_dir: "c:\Windows\Temp"
+    tasks:
+    - name: Get WEC service status
+      win_service:
+        name: wecsvc
+      register: wecsvc_status
+
+    - name: Enable WEC service
+      win_shell: wecutil qc /q
+      when:
+        - not wecsvc_status.start_mode == "delayed"
+        - not wecsvc_status.state == "running"
+      register: wecsvc_service_started
+
+    - name: Fix ACL access
+      win_shell: "{{ item }}"
+      with_items:
+        - 'netsh http delete urlacl url=http://+:5985/wsman/'
+        - 'netsh http add urlacl url=http://+:5985/wsman/ sddl="D:(A;;GX;;;S-1-5-80-569256582-2953403351-2909559716-1301513147-412116970)(A;;GX;;;S-1-5-80-4059739203-877974739-1245631912-527174227-2996563517)"'
+        - 'netsh http delete urlacl url=https://+:5986/wsman/'
+        - 'netsh http add urlacl url=https://+:5986/wsman/ sddl="D:(A;;GX;;;S-1-5-80-569256582-2953403351-2909559716-1301513147-412116970)(A;;GX;;;S-1-5-80-4059739203-877974739-1245631912-527174227-2996563517)"'
+
+    - name: Upload WEF configuration template to host
+      ansible.windows.win_template:
+        src: "{{ playbook_dir }}\templates\wef-default-subscription.xml""
+        dest: "{{ win_temp_dir }}\wef-default-subscription.xml"
+
+        
+    - name: Configure WEF default subscriptions
+      ansible.windows.win_command: "wecutil cs {{ win_temp_dir }}\wef-default-subscription.xml"

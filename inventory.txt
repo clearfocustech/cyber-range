@@ -9,8 +9,11 @@ test-win10-2 ip=10.3.0.8 prefix=24 gateway=10.3.0.1 vm_network=Dev ram_mb=8192 c
 test-win11 ip=10.3.0.9 prefix=24 gateway=10.3.0.1 vm_network=Dev ram_mb=8192 cpu_count=4 disk_gb=64 
 test-win11-2 ip=10.3.0.10 prefix=24 gateway=10.3.0.1 vm_network=Dev ram_mb=8192 cpu_count=4 disk_gb=64 
 
-[ubuntu]
-test-ubuntu22 ip=10.3.0.11 netmask=255.255.255.0 gateway=10.3.0.1 vm_network=Dev ram_mb=8192 cpu_count=4 disk_gb=64 
+[ubuntu22]
+test-ubuntu22 ip=10.3.0.11 netmask=255.255.255.0 gateway=10.3.0.1 vm_network=Dev ram_mb=8192 cpu_count=4 disk_gb=64
+
+[ubuntu20]
+test-ubuntu20 ip=10.3.0.12 netmask=255.255.255.0 gateway=10.3.0.1 vm_network=Dev ram_mb=8192 cpu_count=4 disk_gb=64
 
 
 [win10:vars]
@@ -60,16 +63,27 @@ win10
 win11
 win2019
 
+[ubuntu22:vars]
+iso_image=ubuntu-22.04.4-live-server-amd64.iso
+
+[ubuntu20:vars]
+iso_image=ubuntu-20.04.6-live-server-amd64.iso
+
 [ubuntu:vars]
 nameserver=10.3.0.5
 syslog_server=10.3.0.5
-iso_image=ubuntu-20.04.2-live-server-amd64.iso
+local_admin=ubuntu
+local_admin_pass=Password!
+
+[ubuntu:children]
+ubuntu20
+ubuntu22
 
 
 [vsphere:vars]
 vsphere_hostname=vcsa.your.domain
 esxi_host=10.2.0.13
-vsphere_datacenter=hq-datacenter
+vsphere_datacenter=ha-datacenter
 vsphere_datastore=DataStore
 vsphere_iso_datastore=DataStore
 vsphere_iso_folder=ISOs
