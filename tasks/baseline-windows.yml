@@ -2,8 +2,8 @@
   tasks:
     - name: Install 7-Zip
       win_package:
-        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\7z1900-x64.msi
-        product_id: '{23170F69-40C1-2702-2301-000001000000}'
+        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\7z2404-x64.msi
+        product_id: '{23170F69-40C1-2702-2404-000001000000}'
         state: present
         username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
         password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
@@ -22,22 +22,6 @@
         username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
         password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
         
-    - name: Install Wireshark
-      win_package:
-        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\Wireshark-4.2.3-x64.exe
-        creates_path: C:\Program Files\Wireshark\Wireshark.exe
-        creates_version: 4.2.3
-        arguments: /S
-        state: present
-        username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
-        password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
-        become: yes
-        become_method: runas
-        become_flags: logon_type=new_credential logon_flags:netcredentials_only
-        vars: 
-          ansible_become_user: "{{ hostvars[inventory_hostname]['domain_name'] }}\{{ hostvars[inventory_hostname]['domain_admin'] }}"
-          ansible_become_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"
-          
     - name: Install WinSCP
       win_package:
         path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\WinSCP-6.3.2-Setup.exe
@@ -55,3 +39,28 @@
         vars: 
           ansible_become_user: "{{ hostvars[inventory_hostname]['domain_name'] }}\{{ hostvars[inventory_hostname]['domain_admin'] }}"
           ansible_become_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"          
+
+    - name: Install Notepad++
+      win_package:
+        path: \\{{ hostvars[inventory_hostname]['domain'] }}\software\npp.8.6.5.Installer.x64.exe
+        creates_path: C:\Program Files\Notepad++\notepad++.exe
+        creates_version: 8.6.5
+        arguments:
+          - /S
+        state: present
+        username: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+        password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
+        become: yes
+        become_method: runas
+        become_flags: logon_type=new_credential logon_flags:netcredentials_only
+        vars: 
+          ansible_become_user: "{{ hostvars[inventory_hostname]['domain_name'] }}\{{ hostvars[inventory_hostname]['domain_admin'] }}"
+          ansible_become_password: "{{ hostvars[inventory_hostname]['domain_admin_pass'] }}"          
+
+    - name: Fix CVE-2013-3900a
+      when: False
+      ansible.windows.win_regedit:
+        path: HKLM:\Software\Microsoft\Cryptography\Wintrust\Config\
+        name: EnableCertPaddingCheck
+        data: 1
+        type: dword
