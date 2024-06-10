@@ -40,8 +40,14 @@
       path: "{{ playbook_dir }}/build"
       state: directory
 
-  - name: Update ISO image filename to end with -no-prompt.iso 
-    set_fact: iso_image="{{ iso_image }}-no-prompt.iso"
+  - name: set ISO name
+    ansible.builtin.set_fact:
+      iso_image_no_prompt: "{{ iso_image }}"
+
+  - name: check ISO name
+    when: not iso_image is search("no-prompt")
+    ansible.builtin.set_fact:
+      iso_image_no_prompt: "{{ iso_image }}-no-prompt.iso"
 
 
   - name: Query if Windows ISO already exists, do not constantly re-upload it. RED TEXT/FAILURE HERE IS OK.
