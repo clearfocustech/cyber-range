@@ -27,7 +27,16 @@
   - command: mktemp -d
     delegate_to: localhost
     register: loopdir
- 
+
+  - name: set ISO name
+    ansible.builtin.set_fact:
+      iso_image_no_prompt: "{{ iso_image }}"
+
+  - name: check ISO name
+    when: not iso_image is search("no-prompt")
+    ansible.builtin.set_fact:
+      iso_image_no_prompt: "{{ iso_image }}-no-prompt.iso"
+
   - name: create local build directory
     file: 
       path: "{{ playbook_dir }}/build"
