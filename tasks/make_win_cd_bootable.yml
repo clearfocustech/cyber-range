@@ -49,7 +49,7 @@
       password: "{{ vsphere_password }}"
       datacenter: "{{ vsphere_datacenter }}"
       datastore: "{{ vsphere_iso_datastore }}"
-      path: "{{ vsphere_iso_directory }}/{{ iso_image }}-no-prompt.iso"
+      path: "{{ vsphere_iso_directory }}/{{ iso_image_no_prompt }}"
       state: file
       validate_certs: False
     delegate_to: localhost
