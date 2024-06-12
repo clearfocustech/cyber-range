@@ -38,7 +38,7 @@ echo  "We feed to fix DNS, we assume the Ansbible host has a different DNS serve
 sudo cat catfish-inventory.txt | grep ip= | awk '{print $2 " " $1}' | sed 's/ip=//' >> /etc/hosts
 
 echo "Starting playbooks to setup ActiveDirectory"
-ansible-playbook ./tasks/first-domain-controller.yml -l win2019 -i catfish-inventory.txt
+ansible-playbook ./tasks/first-domain-controller.yml -l dc1 -i catfish-inventory.txt
 echo "Sleeping for 30 seconds before joining Windows computers to the domain."
 sleep 30
 ansible-playbook ./tasks/join-domain.yml -l '!test-win2019'  -i catfish-inventory.txt
