@@ -8,4 +8,7 @@
 ##
 - Tested to run on CentOS 7 and Ubuntu 20 and 22.
 - Tested with ESXi 6.7 and 7.0
-- Tested to build Windows Server 2019, Windows 10, and Ubuntu 18 & 20.  
+- Tested to build Windows Server 2019, Windows 10, and Ubuntu 18 & 20.
+
+- ## Use
+- Read [Lab-from-scratch.md](./Lab-from-scratch.md) 
