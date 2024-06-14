@@ -1,8 +1,8 @@
 # Creating a lab from scratch
 
 # TLDR:
-- Download the ISOs identified in the inventory.txt file
-- Have admin credentials to a paid licensed ESXi host or vCenter cluster (the free ESXi license doesn;t support writes through the API)
+- Download the ISOs identified in the iso_image variables in inventory.txt file to a directory named isos 
+- Have admin credentials to a paid licensed ESXi host or vCenter cluster (the free ESXi license doesn't support writes through the API)
 - Run the build-lab.sh script
 
 
@@ -12,6 +12,7 @@
 - Edit the inventory file
 - Download ISOs for Windows Server, 10, and 11
 - Download ISOs for Ubuntu and CentOS
+- Placed all of the isos in a folder named isos in the tasks folder. Or optionally place them elsewhere and symbolically link that folder to tasks/isos
 - Download any software MSIs defined in the installer scripts
 - Run the script build-lab.sh
 
