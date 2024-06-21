@@ -1,0 +1,21 @@
+---
+- name: Install Exchange 2019 unattended
+  hosts: all
+
+  tasks:
+   - name: Mount Exchange 2019 ISO from datastore
+     vmware_guest:
+      hostname: "{{ vcenter_hostname }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      validate_certs: no
+      name: "{{ exchange_host }}"
+      cdrom:
+        type: iso
+        path: "{{ vsphere_iso_directory }}/{{ exchange_iso }}.iso"
+        state: present
+
+   - name: Run unattended Exchange 2019 install
+     win_command: 
+       cmd: "Setup.exe /IAcceptExchangeServerLicenseTerms_DiagnosticDataOFF /mode:Install /r:MB Microsoft Exchange Server 2016 Cumulative Update 23 Unattended Setup"
+       chdir: "D:\"

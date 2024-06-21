@@ -1,0 +1,31 @@
+---
+- hosts: all
+  tasks:
+  - name: Install apache
+    package:
+      name: "{{ item }}"
+      state: present
+    become: yes
+    with_items:
+      - apache2
+
+  - name: Enable apache on startup
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+    become: yes
+
+  - name: Deploy content to apache web root
+    copy: 
+      src: "{{ item.content_path }}"
+      dest: "/var/www/html"
+      owner: www-data
+      group: www-data
+    become: yes
+
+  - name: Restart apache after content deployment
+    service:
+      name: apache2
+      state: restarted
+    become: yes
