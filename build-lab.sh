@@ -18,7 +18,7 @@ echo "Make sure you have linked the inventory.txt file, iso directory, and templ
 
 ## Run this for one of each host with a unique iso
 echo "Making the Windows CD iso images bootable without prompt to continue"
-ansible-playbook ./tasks/make_win_cd_bootable.yml -l win10,win2019 -i catfish-inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local"
+ansible-playbook ./tasks/make_win_cd_bootable.yml -l win10,win2019 -i inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local"
 echo "If the above playbooks completed successfully, please go edit you inventory and update the iso_image variables to end with '-no-prompt.iso'"
 echo "Press any key to continue"
 read var
@@ -27,18 +27,24 @@ read var
 
 echo "Starting playbooks to install the hosts"
 echo "Starting Windows installation"
-ansible-playbook ./tasks/install-windows-esxi.yml -l win10,win2019 -i catfish-inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local" 
+ansible-playbook ./tasks/install-windows-esxi.yml -l win10,win11,win2019 -i inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local" 
+
 echo "Starting Linux installation"
-ansible-playbook ./tasks/install-ubuntu-esxi.yml -l ubuntu22,ubuntu20 -i catfish-inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local"
-echo "Sleeping for 30 minutes to let windows finish install"
-sleep 1800
+echo "Installing Ubuntu 18 and 20"
+ansible-playbook ./tasks/install-ubuntu-esxi.yml -l ubuntu20 -i inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local"
+echo "Installing Ubuntu 22 and 24"
+ansible-playbook ./tasks/install-ubuntu22-esxi.yml -l ubuntu22,ubunt24 -i inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local"
+echo "Installing RedHat and variants"
+ansible-playbook ./tasks/install-redhat-esxi.yml -l redhat9 -i inventory.txt -b -k -K -u root --extra-vars "ansible_connection=local"
+echo "Sleeping for 6 minutes to let windows finish install"
+sleep 360
 
 ## Need to update to winrm for hosts
 echo  "We feed to fix DNS, we assume the Ansbible host has a different DNS server than the range, so add them to the local hosts file, via sudo."
-sudo cat catfish-inventory.txt | grep ip= | awk '{print $2 " " $1}' | sed 's/ip=//' >> /etc/hosts
+sudo cat inventory.txt | grep ip= | awk '{print $2 " " $1}' | sed 's/ip=//' >> /etc/hosts
 
 echo "Starting playbooks to setup ActiveDirectory"
-ansible-playbook ./tasks/first-domain-controller.yml -l dc1 -i catfish-inventory.txt
+ansible-playbook ./tasks/first-domain-controller.yml -l dc1 -i inventory.txt
 echo "Sleeping for 30 seconds before joining Windows computers to the domain."
 sleep 30
-ansible-playbook ./tasks/join-domain.yml -l '!test-win2019'  -i catfish-inventory.txt
+ansible-playbook ./tasks/join-domain.yml -l '!test-win2019'  -i inventory.txt
