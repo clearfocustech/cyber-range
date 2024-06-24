@@ -48,3 +48,11 @@ ansible-playbook ./tasks/first-domain-controller.yml -l dc1 -i inventory.txt
 echo "Sleeping for 30 seconds before joining Windows computers to the domain."
 sleep 30
 ansible-playbook ./tasks/join-domain.yml -l '!test-win2019'  -i inventory.txt
+echo "Adding Domain users"
+ansible-playbook ./tasks/domain-users.yml  -i user-inventory.txt
+
+echo "Baselining Windows installations"
+ansible-playbook ./tasks/baseline-windows.yml -l win10 -i inventory.txt
+echo "Baselining Linux installations"
+ansible-playbook ./tasks/baseline-linux.yml -l ubuntu22,ubuntu24 -i inventory.txt
+
