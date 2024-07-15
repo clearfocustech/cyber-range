@@ -1,0 +1,9 @@
+zone "{{ domain }}" {
+    type master;
+    file "/etc/bind/zones/db.{{ domain }}"; # zone file path
+};
+
+zone "{{ octet }}.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.10.128";  # 10.128.0.0/16 subnet
+};
