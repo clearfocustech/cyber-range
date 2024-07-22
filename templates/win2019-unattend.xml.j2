@@ -54,12 +54,18 @@ Notes: Enter your comments here...
 </DiskConfiguration>
 
 <ImageInstall>
-<OSImage>
-<InstallTo>
-<DiskID>0</DiskID>
-<PartitionID>3</PartitionID>
-</InstallTo>
-</OSImage>
+  <OSImage>
+    <InstallFrom>
+      <MetaData wcm:action="add">
+        <Key>/IMAGE/INDEX</Key>
+        <Value>2</Value>
+      </MetaData>
+    </InstallFrom>
+    <InstallTo>
+      <DiskID>0</DiskID>
+      <PartitionID>3</PartitionID>
+    </InstallTo>
+  </OSImage>
 </ImageInstall>
 
 
@@ -160,12 +166,16 @@ Notes: Enter your comments here...
 <PlainText>true</PlainText>
 </AdministratorPassword>
 <LocalAccounts>
-<LocalAccount wcm:action="add">
-<Description>{{ hostvars[inventory_hostname]['local_admin'] }}</Description>
-<DisplayName>{{ hostvars[inventory_hostname]['local_admin'] }}</DisplayName>
-<Group>Administrators</Group>
-<Name>{{ hostvars[inventory_hostname]['local_admin'] }}</Name>
-</LocalAccount>
+  <LocalAccount wcm:action="add">
+    <Password>
+      <Value>{{ hostvars[inventory_hostname]['local_admin_pass'] }}</Value>
+      <PlainText>true</PlainText>
+    </Password>
+    <Description>{{ hostvars[inventory_hostname]['local_admin'] }}</Description>
+    <DisplayName>{{ hostvars[inventory_hostname]['local_admin'] }}</DisplayName>
+    <Group>Administrators</Group>
+    <Name>{{ hostvars[inventory_hostname]['local_admin'] }}</Name>
+  </LocalAccount>
 </LocalAccounts>
 </UserAccounts>
 </component>
