@@ -127,7 +127,7 @@
       guest_id: ubuntu64Guest
       state: poweredon
       disk:
-        - size_gb: 32
+        - size_gb: "{{ disk_gb }}"
           type: thin
           datastore: "{{ vsphere_datastore }}"
       networks:
