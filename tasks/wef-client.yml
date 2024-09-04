@@ -1,10 +1,10 @@
----
-vars:
-  wef_server: "{{ hostvars[inventory_hostname]['wec_server'] }}"
-tasks:
-- name: Enable WEF
-  ansible.windows.win_regedit:
-    path: HKLM:\Software\Policies\Microsoft\Windows\EventLog\EventForwarding\SubscriptionManager
-    name: 1
-    data: Server=http://{{ wef_server }}:5985/wsman/SubscriptionManager/WEC,Refresh=60
-    type: string
+- hosts: all
+  vars:
+    wef_server: "{{ hostvars[inventory_hostname]['wec_server'] }}"
+  tasks:
+  - name: Enable WEF
+    ansible.windows.win_regedit:
+      path: 'HKLM:\Software\Policies\Microsoft\Windows\EventLog\EventForwarding\SubscriptionManager'
+      name: 1
+      data: 'Server=http://{{ wef_server }}:5985/wsman/SubscriptionManager/WEC,Refresh=60'
+      type: string
