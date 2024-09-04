@@ -1,6 +1,6 @@
 - hosts: all
     vars:
-        win_temp_dir: "c:\Windows\Temp"
+        win_temp_dir: 'c:\Windows\Temp'
     tasks:
     - name: Get WEC service status
       win_service:
@@ -24,9 +24,9 @@
 
     - name: Upload WEF configuration template to host
       ansible.windows.win_template:
-        src: "{{ playbook_dir }}\templates\wef-default-subscription.xml""
-        dest: "{{ win_temp_dir }}\wef-default-subscription.xml"
+        src: '{{ playbook_dir }}/templates/wef-default-subscription.xml.j2'
+        dest: '{{ win_temp_dir }}'wef-default-subscription.xml'
 
         
     - name: Configure WEF default subscriptions
-      ansible.windows.win_command: "wecutil cs {{ win_temp_dir }}\wef-default-subscription.xml"
+      ansible.windows.win_command: 'wecutil cs {{ win_temp_dir }}\wef-default-subscription.xml'
