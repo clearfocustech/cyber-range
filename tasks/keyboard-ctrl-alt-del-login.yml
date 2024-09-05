@@ -1,0 +1,91 @@
+- hosts: all
+  connection: local
+  become: no
+  gather_facts: no
+
+
+    #  vars_prompt:
+    #  - name: "vsphere_username"
+    #    prompt: "Enter your vsphere username"
+    #    private: yes
+    #  - name: "vsphere_password"
+    #    prompt: "Enter your vsphere password"
+    #    private: yes
+
+  vars:
+    vsphere_username: "{{ lookup('env', 'VSPHERE_USERNAME') }}"
+    vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
+
+    esxi_hostname: "{{ hostvars[inventory_hostname]['esxi_host'] }}"
+    vsphere_datacenter: "{{ hostvars[inventory_hostname]['vsphere_datacenter'] }}"
+    vsphere_datastore: "{{ hostvars[inventory_hostname]['vsphere_datastore'] }}"
+    vsphere_iso_datastore: "{{ hostvars[inventory_hostname]['vsphere_iso_datastore'] }}"
+    vsphere_iso_directory: "{{ hostvars[inventory_hostname]['vsphere_iso_folder'] }}"
+    vsphere_hostname: "{{ hostvars[inventory_hostname]['vsphere_hostname'] }}"
+    folder_name: "/"
+    gather_facts: no
+
+  tasks:
+  - name: ensure we start from lock screen with WIN-L
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+      hostname: "{{ vsphere_hostname }}"
+      username: "{{ vsphere_username }}"
+      password: "{{ vsphere_password }}"
+      datacenter: "{{ vsphere_datacenter }}"
+      folder: "{{ folder_name }}"
+      name: "{{ inventory_hostname }}"
+      keys_send:
+        - WINDOWS_L
+      validate_certs: False
+
+  - name: Pause for 3 seconds
+    delegate_to: localhost
+    ansible.builtin.pause:
+      seconds: 3
+
+  - name: CTRL ALT DEL to login
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+     hostname: "{{ vsphere_hostname }}"
+     username: "{{ vsphere_username }}"
+     password: "{{ vsphere_password }}"
+     datacenter: "{{ vsphere_datacenter }}"
+     folder: "{{ folder_name }}"
+     name: "{{ inventory_hostname }}"
+     moid: vm-42
+     keys_send:
+      - CTRL_ALT_DEL
+     validate_certs: False
+
+  - name: Pause for 3 seconds
+    delegate_to: localhost
+    ansible.builtin.pause:
+      seconds: 3
+
+  ## We should send username here, but no way to check if it is already there. We just assume they are the last logged in user for the time being
+  - name: Send password
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+     hostname: "{{ vsphere_hostname }}"
+     username: "{{ vsphere_username }}"
+     password: "{{ vsphere_password }}"
+     datacenter: "{{ vsphere_datacenter }}"
+     folder: "{{ folder_name }}"
+     name: "{{ inventory_hostname }}"
+     string_send: "{{ login_password }}"
+     validate_certs: False
+
+  - name: Send enter
+    delegate_to: localhost
+    community.vmware.vmware_guest_sendkey:
+     hostname: "{{ vsphere_hostname }}"
+     username: "{{ vsphere_username }}"
+     password: "{{ vsphere_password }}"
+     datacenter: "{{ vsphere_datacenter }}"
+     folder: "{{ folder_name }}"
+     name: "{{ inventory_hostname }}"
+     keys_send:
+       - ENTER
+     validate_certs: False
+
