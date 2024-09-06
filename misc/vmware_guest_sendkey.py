@@ -251,6 +251,7 @@ class PyVmomiHelper(PyVmomi):
             ('WINDOWS', '0xe3', [('', [])]),
             ('ALT_F4', '0x3d', [('', ['ALT'])]),
             ('WINDOWS_R', '0x15', [('', ['WINDOWS'])]),
+            ('WINDOWS_L', '0x0f', [('', ['WINDOWS'])]),
         ]
 
     @staticmethod
