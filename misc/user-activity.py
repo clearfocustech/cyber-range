@@ -17,7 +17,7 @@ class keyboardActivity():
             #time.sleep(3)
             #print("Running task: ansible-playbook "+ task+ " -i catfish-it-inventory.txt -l "+ host + " -e login_password="+password+ " -e "+ extra+"\n")
             queue.put("Launching "+task+ " on "+host+"\n")
-            task_result = subprocess.run(["ansible-playbook", task, "-i", "catfish-it-inventory.txt", "-l", host, "-e", "login_password="+password, "-e", extra], capture_output=True, text=True )
+            task_result = subprocess.run(["ansible-playbook", task, "-i", "catfish-it-inventory.txt", "-l", host, "-e", "login_password="+password, "-e", "website="+extra], capture_output=True, text=True )
             queue.put(str(task_result))
             # ansible-playbook ./tasks/keyboard-ctrl-alt-del-login.yml -i catfish-it-inventory.txt -l haw-ce-wks1 -e login_password='S3cur1ty@Lab'
             # ansible-playbook ./tasks/keyboard-open-edge-website.yml -i catfish-it-inventory.txt -l haw-ce-wks1 -e website='https://www.msn.com'
