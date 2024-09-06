@@ -25,7 +25,7 @@
     - name: Upload WEF configuration template to host
       ansible.windows.win_template:
         src: '{{ playbook_dir }}/templates/wef-default-subscription.xml.j2'
-        dest: '{{ win_temp_dir }}'wef-default-subscription.xml'
+        dest: '{{ win_temp_dir }}/wef-default-subscription.xml'
 
         
     - name: Configure WEF default subscriptions
