@@ -79,6 +79,7 @@
       state: file
       validate_certs: False
     delegate_to: localhost
+    run_once: True
     register: iso_exists
     ignore_errors: true
 
