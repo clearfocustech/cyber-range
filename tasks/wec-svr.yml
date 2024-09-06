@@ -1,7 +1,7 @@
 - hosts: all
-    vars:
-        win_temp_dir: 'c:\Windows\Temp'
-    tasks:
+  vars:
+      win_temp_dir: 'c:\Windows\Temp'
+  tasks:
     - name: Get WEC service status
       win_service:
         name: wecsvc
