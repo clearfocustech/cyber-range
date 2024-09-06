@@ -16,7 +16,6 @@
     vsphere_password: "{{ lookup('env', 'VSPHERE_PASSWORD') }}"
 
     website: "{{ hostvars[inventory_hostname]['website'] }}"
-    website: "https://news.google.com"
 
   tasks:
   - name: Send WINDOWS_R
