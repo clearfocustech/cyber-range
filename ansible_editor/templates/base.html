@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ansible Inventory Editor</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .action-form { display: inline; margin: 0; }
+        .add-link { margin-bottom: 20px; display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input[type="text"] { width: 100%; padding: 8px; box-sizing: border-box; }
+        .variable-field { margin-top: 10px; padding: 10px; border: 1px solid #ccc; }
+        .variable-field input { margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Ansible Inventory Editor</h1>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
