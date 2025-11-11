@@ -144,6 +144,16 @@
         type: iso
         iso_path: "[{{ vsphere_iso_datastore }}] /{{ vsphere_iso_directory }}/{{ inventory_hostname }}.iso"
 
+  - name: Ensure an A record is present in DNS for host
+    when: True
+    delegate_to: "{{ hostvars[inventory_hostname]['domain_controller'] }}"
+    connection: winrm
+    ansible.windows.win_dns_record:
+        name: "{{ inventory_hostname }}"
+        zone: "{{ hostvars[inventory_hostname]['domain'] }}"
+        type: "A"
+        value: "{{ hostvars[inventory_hostname]['ip'] }}"
+        state: "present"
 
   - name: delete custom iso image from datastore
     when: False
