@@ -54,6 +54,7 @@ ansible_winrm_transport=ntlm
 
 [domain:vars]
 domain_name=test.lab.local
+domain_controller=dc1
 dsrm_pass=AStr0ngDSRMP@ssword
 domain_admin=Administrator
 domain_admin_pass=Password!
